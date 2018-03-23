@@ -1,0 +1,9 @@
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (PalynromDll.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  stdafx.cpp
+  dllmain.cpp
+  PalinromeDll.cpp
+c:\users\sasha\dropbox\mipt6\прога\winapi\task4\dynamiclibrary\palynromdll\palinromedll.cpp(13): warning C4273: 'Count': inconsistent dll linkage
+  c:\users\sasha\dropbox\mipt6\прога\winapi\task4\dynamiclibrary\palynromdll\palindromedll.h(15): note: see previous definition of 'Count'
+  LINK : C:\Users\Sasha\Dropbox\mipt6\Прога\winapi\Task4\DynamicLibrary\Debug\PalindromeDll.dll not found or not built by the last incremental link; performing full link
+     Creating library C:\Users\Sasha\Dropbox\mipt6\Прога\winapi\Task4\DynamicLibrary\Debug\PalindromeDll.lib and object C:\Users\Sasha\Dropbox\mipt6\Прога\winapi\Task4\DynamicLibrary\Debug\PalindromeDll.exp
+  PalynromDll.vcxproj -> C:\Users\Sasha\Dropbox\mipt6\Прога\winapi\Task4\DynamicLibrary\Debug\PalindromeDll.dll
