@@ -32,6 +32,7 @@ bool COverlappedWindow::OnClose() {
 		int msgBox = MessageBox(handle, L"Save Text?", L"Window", MB_YESNOCANCEL);
 		switch (msgBox) {
 		case IDYES:
+			this->saveText();
 			return true;
 		case IDNO:
 			return true;
@@ -39,6 +40,27 @@ bool COverlappedWindow::OnClose() {
 			return false;
 		}
 	}
+	return true;
+}
+
+void COverlappedWindow::saveText() {
+	size_t lengthMessage = SendMessage(child.GetHandle(), WM_GETTEXTLENGTH, 0, 0);
+	wchar_t* text = new wchar_t[lengthMessage + 1];
+	SendMessage(child.GetHandle(), WM_GETTEXT, lengthMessage + 1, (LPARAM)text);
+	wchar_t fileName[100];
+	OPENFILENAME opf = {};
+	opf.lStructSize = sizeof(OPENFILENAME);
+	opf.hwndOwner = handle;
+	opf.lpstrFile = fileName;
+	opf.lpstrFile[0] = '\0';
+	opf.nMaxFile = sizeof(fileName);
+	bool result = GetSaveFileName(&opf);
+	if (result) {
+		HANDLE fileHandle = CreateFile(fileName, GENERIC_WRITE, (FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE), 0, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
+		WriteFile(fileHandle, text, lengthMessage * sizeof(wchar_t), 0, 0);
+		CloseHandle(fileHandle);
+	}
+	delete[] text;
 }
 
 void COverlappedWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
@@ -57,6 +79,7 @@ void COverlappedWindow::Show(int cmdShow) {
 }
 
 LRESULT COverlappedWindow::windowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam) {
+
 	switch (message) {
 	case WM_CREATE:
 	{

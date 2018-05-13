@@ -19,4 +19,5 @@ private:
 	bool textChanged = false;
 	CEditControl child;
 	static LRESULT __stdcall windowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lparam);
+	void saveText();
 };
