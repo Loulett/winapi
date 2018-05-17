@@ -1,4 +1,5 @@
 #include "COverlappedWindow.h"
+#include "resource.h"
 
 bool COverlappedWindow::RegisterClass() {
 	WNDCLASSEX ws;
@@ -6,6 +7,7 @@ bool COverlappedWindow::RegisterClass() {
 	ws.cbSize = sizeof(WNDCLASSEX);
 	ws.lpfnWndProc = COverlappedWindow::windowProc;
 	ws.hInstance = GetModuleHandle(0);
+	ws.lpszMenuName = MAKEINTRESOURCE(IDR_MENU1);
 	ws.lpszClassName = L"OverlappedWindow";
 	return (::RegisterClassEx(&ws) != 0);
 }
@@ -15,6 +17,7 @@ bool COverlappedWindow::Create() {
 		L"OverlappedWindow", L"Window", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
 		CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, GetModuleHandle(0), this);
 	child.Create(handle);
+	menu = LoadMenu(GetModuleHandle(0), MAKEINTRESOURCE(IDR_MENU1));
 	return (handle != 0);
 }
 
@@ -71,11 +74,26 @@ void COverlappedWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		textChanged = true;
 	}
 	}
+
+	switch LOWORD(wParam)
+	{
+	case ID_VIEW_SETTINGS:
+	{
+		HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(NULL);
+		DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOGBAR), handle, reinterpret_cast<DLGPROC>(dialogProc));
+		break;
+	}
+	}
 }
 
 void COverlappedWindow::Show(int cmdShow) {
 	ShowWindow(handle, cmdShow);
 	child.Show(cmdShow);
+}
+
+void COverlappedWindow::OnDestroy() {
+	DestroyMenu(menu);
+	PostQuitMessage(0);
 }
 
 LRESULT COverlappedWindow::windowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -105,16 +123,55 @@ LRESULT COverlappedWindow::windowProc(HWND handle, UINT message, WPARAM wParam, 
 	case WM_CLOSE:
 	{
 		COverlappedWindow* window = (COverlappedWindow*)GetWindowLongPtr(handle, GWLP_USERDATA);
-		window->OnClose();
-		return DefWindowProc(handle, message, wParam, lParam);
+
+		if (window->OnClose()) {
+			return DefWindowProc(handle, message, wParam, lParam);
+		}
+		else {
+			return 0;
+		}
 	}
 	case WM_DESTROY:
 	{
 		COverlappedWindow* window = (COverlappedWindow*)GetWindowLongPtr(handle, GWLP_USERDATA);
-		PostQuitMessage(0);
+		window->OnDestroy();
 		return 0;
 	}
 	default:
 		return DefWindowProc(handle, message, wParam, lParam);
 	}
+}
+
+LRESULT COverlappedWindow::dialogProc(HWND handleDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+	switch (message) {
+	case WM_INITDIALOG: 
+	{
+		return TRUE;
+	}
+	case WM_COMMAND:
+	{
+		switch (LOWORD(wParam))
+		{
+		case IDC_BUTTON3:
+		{
+			EndDialog(handleDlg, 0);
+			return TRUE;
+		}
+		case IDC_BUTTON4:
+		{
+			EndDialog(handleDlg, 0);
+			return FALSE;
+		}
+		}
+		break;
+	}
+	case WM_CLOSE:
+	{
+		EndDialog(handleDlg, 0);
+		return TRUE;
+	}
+	default:
+		return FALSE;
+	}
+
 }

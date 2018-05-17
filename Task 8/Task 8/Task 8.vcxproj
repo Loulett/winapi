@@ -150,6 +150,10 @@
   <ItemGroup>
     <ClInclude Include="CEditControl.h" />
     <ClInclude Include="COverlappedWindow.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Task 8.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
