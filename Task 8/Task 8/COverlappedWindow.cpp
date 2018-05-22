@@ -14,8 +14,9 @@ bool COverlappedWindow::RegisterClass() {
 
 bool COverlappedWindow::Create() {
 	handle = CreateWindowEx(0,
-		L"OverlappedWindow", L"Window", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+		L"OverlappedWindow", L"Window", WS_OVERLAPPEDWINDOW | WS_EX_LAYERED, CW_USEDEFAULT, CW_USEDEFAULT,
 		CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, GetModuleHandle(0), this);
+	SetLayeredWindowAttributes(handle, 0, 255, LWA_ALPHA);
 	child.Create(handle);
 	menu = LoadMenu(GetModuleHandle(0), MAKEINTRESOURCE(IDR_MENU1));
 	return (handle != 0);
@@ -80,7 +81,8 @@ void COverlappedWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	case ID_VIEW_SETTINGS:
 	{
 		HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(NULL);
-		DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOGBAR), handle, reinterpret_cast<DLGPROC>(dialogProc));
+		dialog.Create(hInstance, handle, child.GetHandle());
+		InvalidateRect(handle, NULL, TRUE);
 		break;
 	}
 	}
@@ -94,6 +96,13 @@ void COverlappedWindow::Show(int cmdShow) {
 void COverlappedWindow::OnDestroy() {
 	DestroyMenu(menu);
 	PostQuitMessage(0);
+}
+
+LRESULT COverlappedWindow::OnCtlColorEdit(HDC hdc) {
+	SetTextColor(hdc, fontColor);
+	SetBkColor(hdc, bgColor);
+	brush = CreateSolidBrush(bgColor);
+	return (LRESULT)brush;
 }
 
 LRESULT COverlappedWindow::windowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -131,6 +140,11 @@ LRESULT COverlappedWindow::windowProc(HWND handle, UINT message, WPARAM wParam, 
 			return 0;
 		}
 	}
+	case WM_CTLCOLOREDIT:
+	{
+		COverlappedWindow* window = (COverlappedWindow*)GetWindowLongPtr(handle, GWLP_USERDATA);
+		return window->OnCtlColorEdit((HDC)wParam);
+	}
 	case WM_DESTROY:
 	{
 		COverlappedWindow* window = (COverlappedWindow*)GetWindowLongPtr(handle, GWLP_USERDATA);
@@ -140,38 +154,4 @@ LRESULT COverlappedWindow::windowProc(HWND handle, UINT message, WPARAM wParam, 
 	default:
 		return DefWindowProc(handle, message, wParam, lParam);
 	}
-}
-
-LRESULT COverlappedWindow::dialogProc(HWND handleDlg, UINT message, WPARAM wParam, LPARAM lParam) {
-	switch (message) {
-	case WM_INITDIALOG: 
-	{
-		return TRUE;
-	}
-	case WM_COMMAND:
-	{
-		switch (LOWORD(wParam))
-		{
-		case IDC_BUTTON3:
-		{
-			EndDialog(handleDlg, 0);
-			return TRUE;
-		}
-		case IDC_BUTTON4:
-		{
-			EndDialog(handleDlg, 0);
-			return FALSE;
-		}
-		}
-		break;
-	}
-	case WM_CLOSE:
-	{
-		EndDialog(handleDlg, 0);
-		return TRUE;
-	}
-	default:
-		return FALSE;
-	}
-
 }

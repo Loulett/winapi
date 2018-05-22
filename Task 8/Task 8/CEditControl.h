@@ -5,8 +5,8 @@ class CEditControl {
 public:
 	bool Create(HWND parentHandle);
 	void Show(int cmdShow);
-	HWND GetHandle();;
+	HWND GetHandle();
 
 private:
-	HWND handle;;
+	HWND handle;
 };
