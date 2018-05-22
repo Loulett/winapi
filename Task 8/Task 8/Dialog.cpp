@@ -36,7 +36,8 @@ HWND Dialog::GetHandle() {
 void Dialog::Create(HINSTANCE hInstance, HWND pHandle, HWND ecHandle) {
 	parentHandle = pHandle;
 	editControlHandle = ecHandle;
-	DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOGBAR), pHandle, (DLGPROC)dialogProc, (LPARAM)this);
+	CreateDialogParam(hInstance, MAKEINTRESOURCE(IDD_DIALOGBAR), pHandle, (DLGPROC)dialogProc, (LPARAM)this);
+	ShowWindow(handle, SW_SHOW);
 }
 
 void Dialog::OnCreate(HWND handleDlg) {
@@ -54,10 +55,7 @@ void Dialog::OnCreate(HWND handleDlg) {
 	oldSettings.fontColor = parent->GetFontColor();
 	oldSettings.backGroundColor = parent->GetBgColor();
 
-	newSettings.font = logFont;
-	newSettings.opacity = parent->GetOpacity();
-	newSettings.fontColor = parent->GetFontColor();
-	newSettings.backGroundColor = parent->GetBgColor();
+	newSettings = oldSettings;
 
 	SendMessage(GetDlgItem(handle, IDC_SLIDER1), TBM_SETPOS, true, (LPARAM)logFont.lfHeight);
 	SendMessage(GetDlgItem(handle, IDC_SLIDER2), TBM_SETPOS, true, newSettings.opacity);
@@ -94,10 +92,7 @@ void Dialog::updateSettings(Settings& settings) {
 	parent->SetFontColor(settings.fontColor);
 	parent->SetOpacity(settings.opacity);
 
-	bool res = true;
-	res = SetLayeredWindowAttributes(parentHandle, RGB(0, 0, 0), settings.opacity, LWA_ALPHA);
-	if (! res)
-	{
+	if (!SetLayeredWindowAttributes(parentHandle, 0, settings.opacity, LWA_ALPHA)) {
 		printError();
 	}
 
@@ -106,10 +101,12 @@ void Dialog::updateSettings(Settings& settings) {
 }
 
 void Dialog::OnOk() {
+	preview = false;
 	updateSettings(newSettings);
 }
 
 void Dialog::OnClose() {
+	preview = false;
 	updateSettings(oldSettings);
 }
 

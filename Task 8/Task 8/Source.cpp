@@ -18,8 +18,10 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE prevInstance, LPWSTR commandLi
 		if (getMessageResult == -1) {
 			return -1;
 		}
-		::TranslateMessage(&message);
-		::DispatchMessage(&message);
+		if (!IsDialogMessage(window.GetDialogHandle(), &message)) {
+			::TranslateMessage(&message);
+			::DispatchMessage(&message);
+		}
 	}
 
 	return 0;

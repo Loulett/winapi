@@ -16,6 +16,8 @@ public:
 	DWORD GetBgColor() { return bgColor; }
 	void SetBgColor(DWORD newBgColor) { bgColor = newBgColor;}
 
+	HWND GetDialogHandle() { return dialog.GetHandle(); }
+
 protected:
 	void OnCreate();
 	void OnSize();
@@ -32,7 +34,7 @@ private:
 	Dialog dialog;
 	static LRESULT __stdcall windowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lparam);
 	void saveText();
-	BYTE opacity;
+	BYTE opacity = 255;
 	DWORD fontColor = RGB(0, 0, 0), bgColor = RGB(255, 255, 255);
 	HBRUSH brush;
 };

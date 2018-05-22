@@ -13,12 +13,15 @@ bool COverlappedWindow::RegisterClass() {
 }
 
 bool COverlappedWindow::Create() {
-	handle = CreateWindowEx(0,
-		L"OverlappedWindow", L"Window", WS_OVERLAPPEDWINDOW | WS_EX_LAYERED, CW_USEDEFAULT, CW_USEDEFAULT,
+	handle = CreateWindowEx(WS_EX_LAYERED,
+		L"OverlappedWindow", L"Window", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
 		CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, GetModuleHandle(0), this);
-	SetLayeredWindowAttributes(handle, 0, 255, LWA_ALPHA);
 	child.Create(handle);
 	menu = LoadMenu(GetModuleHandle(0), MAKEINTRESOURCE(IDR_MENU1));
+	SetLayeredWindowAttributes(handle, 0, opacity, LWA_ALPHA);
+	HFONT hFont = CreateFont(14, 0, 0, 0, FW_DONTCARE, FALSE, TRUE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+		CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, TEXT("Times New Roman"));
+	SendMessage(child.GetHandle(), WM_SETFONT, reinterpret_cast<WPARAM>(hFont), TRUE);
 	return (handle != 0);
 }
 
