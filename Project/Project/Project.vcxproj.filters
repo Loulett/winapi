@@ -24,12 +24,18 @@
     <ClCompile Include="CheckerBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BorderField.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CheckerBoard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BorderField.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

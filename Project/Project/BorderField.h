@@ -1,23 +1,19 @@
 #pragma once
 #include <Windows.h>
-#include "CheckerBoard.h"
-#include "BorderField.h"
+#include <string>
 
-class BaseWindow
-{
+class BorderField {
 public:
 	static bool RegisterClass();
-	bool Create();
+	bool Create(HWND parentHandle);
 	void Show(int cmdShow);
-	void EndGame(int color);
+	HWND GetHandle() { return handle; }
 
 protected:
-	void OnCreate();
-	void OnSize();
+	void OnPaint();
 
 private:
 	HWND handle;
-	CheckerBoard board;
-	BorderField border1, border2;
+
 	static LRESULT __stdcall windowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lparam);
 };
